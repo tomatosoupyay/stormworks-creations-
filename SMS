@@ -1,0 +1,159 @@
+--main fire control system. Controls firing and dropping of weapons, also controls some data relating to weapon systems.
+function outInstru(drop,hpowo,typeowo)
+	if hpowo ~= 11 and hpowo ~= 0 and typeowo <= 11 and not drop then
+		output.setBool((0+hpowo),true)
+	end
+		if hpowo ~= 11 and hpowo ~= 0 and typeowo <= 11 and drop then
+		output.setBool((10+hpowo),true)
+	end
+end
+i=0
+gun=false
+yesdrop=false
+arm=false -- no arms? :nerd:
+S=screen
+SC=S.setColor
+DL=S.drawLine
+DRF=S.drawRectF
+DR=S.drawRect
+--toggledrop=false
+function onTick()
+	FIRE=input.getBool(2)
+	armed=input.getBool(16)
+	ip1x=input.getNumber(3)
+	ip1y=input.getNumber(4)
+	pressed=input.getBool(1)
+	isClicked = input.getBool(1) and not pressed
+	hp=input.getNumber(15)
+	LOCK=input.getBool(18)
+	glim=input.getNumber(17)
+	glimarm=input.getNumber(18)
+	rxfmis=input.getNumber(19)
+	count=input.getNumber(20)
+	type=input.getNumber(21)
+	l1=input.getNumber(23)
+	l2=input.getNumber(24)
+	l3=input.getNumber(25)
+	l4=input.getNumber(26)
+	l5=input.getNumber(27)
+	l6=input.getNumber(28)
+	l7=input.getNumber(29)
+	l8=input.getNumber(30)
+	l9=input.getNumber(31)
+	l10=input.getNumber(32)
+	str=string.char(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10)
+	armpress=pressed and IPIR(ip1x,ip1y,1,1,11,4)
+	droppress=pressed and IPIR(ip1x,ip1y,1,6,11,4)
+	yesdrop=input.getBool(14)
+	output.setBool(15,armpress)
+	if FIRE and armed or yesdrop and FIRE then
+	outInstru(yesdrop,hp,type)
+	--output.setBool(1,true)
+	end
+	if hp == 11 and FIRE then
+		gun=true
+	else
+		gun=false -- :(
+	end
+	output.setBool(16,gun)
+	output.setBool(14,droppress)
+
+end
+
+function onDraw()
+
+SC(3,3,3)
+DRF(0,0.5,32,32)
+SC(255,255,255)
+i=i-0.1
+if i < -59 then i=0 end
+if hp == 11 then txt(33+i,1,"GUN") else txt(33+i,1,str) end
+--txt(33+i,1,str)
+--txt(33+i,1,"AGM-158")
+SC(3,3,3)
+DRF(1,1.5,11,4)
+if not armed then SC(0,255,10) else SC(255,0,0) end
+txt(1,1,"ARM")
+SC(2,2,2)
+DR(0,0,12,5)
+SC(255,255,255)
+DRF(5,21.5,1,3)
+DRF(7,20.5,1,3)
+DRF(9,19.5,1,3)
+DRF(11,18.5,1,3)
+DRF(13,18.5,1,3)
+DRF(18,18.5,1,3)
+DRF(20,18.5,1,3)
+DRF(22,19.5,1,3)
+DRF(24,20.5,1,3)
+DRF(26,21.5,1,3)
+
+SC(0,255,0)
+DRF(1,30.5,2,1)
+DRF(4,30.5,2,1)
+DRF(7,30.5,2,1)
+DRF(10,30.5,2,1)
+DRF(13,30.5,2,1)
+DRF(17,30.5,2,1)
+DRF(20,30.5,2,1)
+DRF(23,30.5,2,1)
+DRF(26,30.5,2,1)
+DRF(29,30.5,2,1)
+SC(2,2,2)
+DR(4,20,2,4)
+DR(6,19,2,4)
+DR(8,18,2,4)
+DR(10,17,2,4)
+DR(12,17,2,4)
+DR(17,17,2,4)
+DR(19,17,2,4)
+DR(21,18,2,4)
+SC(36,36,36)
+DL(16,5,18.25,8.25)
+DL(15,5,13.25,8.25)
+SC(2,2,2)
+DR(23,19,2,4)
+DR(25,20,2,4)
+DR(12,0,19,5)
+SC(255,255,255)
+
+SC(36,36,36)
+DL(11,12,11.25,14.25)
+DRF(13,8.5,1,3)
+DRF(18,8.5,1,3)
+DRF(20,12.5,1,3)
+DL(20,14,28.25,18.25)
+DL(18,10,20.25,12.25)
+DL(11,12,13.25,10.25)
+DL(3,18,11.25,14.25)
+DL(3,18,3.25,25.25)
+DL(28,18,28.25,25.25)
+DL(20,28,28.25,25.25)
+DL(3,25,11.25,28.25)
+DL(12,28,12.25,31.25)
+DL(19,28,19.25,31.25)
+SC(255,255,255)
+DL(66,50,66.25,50.25)
+if hp == 11 then
+SC(255,0,0)
+else
+SC(255,255,255)
+end
+DRF(12,15.5,3,2)
+DRF(12,12.5,3,1)
+DRF(13,12.5,1,3)
+SC(255,0,0) --highlighters for selected
+if hp == 1 then DRF(1,29.5,2,1) elseif hp == 2 then DRF(4,29.5,2,1) elseif hp == 3 then DRF(7,29.5,2,1) elseif hp == 4 then DRF(10,29.5,2,1) elseif hp == 5 then DRF(13,29.5,2,1) elseif hp == 6 then DRF(17,29.5,2,1) elseif hp == 7 then DRF(20,29.5,2,1) elseif hp == 8 then DRF(23,29.5,2,1) elseif hp == 9 then DRF(26,29.5,2,1) elseif hp == 10 then DRF(29,29.5,2,1) end
+if not yesdrop then SC(0,255,10) else SC(255,0,0) end
+txt(1,6,"DRP")
+SC(2,2,2)
+DR(0,5,12,5)
+
+
+end
+function txt(x,y,t)t=tostring(t)for i=1,t:len()do local c=t:sub(i,i):upper():byte()*3-95if c>193then c=c-78 end c="0x"..string.sub("0000D0808F6F5FAB6D5B7080690096525272120222010168F9F5F1BBD9DBE2FDDBFBB8BCFBFEAF0A01A025055505289C69D7A7FB6699F96FB9FA869BF2F9F921EF69F11FCFF8F696FA4F9EFA55BB8F8F1FE1EF3FD2DC3CBFDF9086109F4841118406F90F09F6642",c,c+2)for j=0,11 do if c&(1<<(11-j))>0then local b=x+j//4+i*4-4 DL(b,y+j%4,b,y+j%4+1)end end end end
+
+function IPIR(x, y, rectX, rectY, rectW, rectH)
+	return x > rectX and y > rectY and x < rectX+rectW and y < rectY+rectH
+end
+
