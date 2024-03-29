@@ -1,4 +1,4 @@
---main fire control system. Controls firing and dropping of weapons, also controls some data relating to weapon systems.
+--main fire control system. Controls firing and dropping of weapons, also controls some data relating to weapon systems. utilizes TACS. See TACS standard
 function outInstru(drop,hpowo,typeowo)
 	if hpowo ~= 11 and hpowo ~= 0 and typeowo <= 11 and not drop then
 		output.setBool((0+hpowo),true)
