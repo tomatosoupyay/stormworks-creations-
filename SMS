@@ -2,6 +2,7 @@
 function outInstru(drop,hpowo,typeowo)
 	if hpowo ~= 11 and hpowo ~= 0 and typeowo <= 11 and not drop then
 		output.setBool((0+hpowo),true)
+		
 	end
 		if hpowo ~= 11 and hpowo ~= 0 and typeowo <= 11 and drop then
 		output.setBool((10+hpowo),true)
@@ -41,11 +42,12 @@ function onTick()
 	l8=input.getNumber(30)
 	l9=input.getNumber(31)
 	l10=input.getNumber(32)
+	
 	str=string.char(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10)
-	armpress=pressed and IPIR(ip1x,ip1y,1,1,11,4)
-	droppress=pressed and IPIR(ip1x,ip1y,1,6,11,4)
+	armpress=pressed and IPIR(ip1x,ip1y,1,1.5,11,4)
+	droppress=pressed and IPIR(ip1x,ip1y,1,6.5,11,4)
 	yesdrop=input.getBool(14)
-	output.setBool(15,armpress)
+
 	if FIRE and armed or yesdrop and FIRE then
 	outInstru(yesdrop,hp,type)
 	--output.setBool(1,true)
@@ -57,6 +59,8 @@ function onTick()
 	end
 	output.setBool(16,gun)
 	output.setBool(14,droppress)
+	output.setBool(15,armpress)
+	output.setBool((21+hp),armed) --this is for LOBL, 31 for hp10, 22 for hp1..
 
 end
 
