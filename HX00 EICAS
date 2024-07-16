@@ -1,0 +1,120 @@
+--main eicas, collects faults and displays them to increase pilot awareness and reduce correction time.
+S = screen
+SC = S.setColor
+DRF = S.drawRectF
+DL = S.drawLine
+DT = S.drawTriangle
+
+--fault tables, warning, caution, other, info
+wmsgs = {}
+cmsgs = {}
+omsgs = {}
+imsgs = {}
+
+--cycles
+cycleTime = 3
+displayTime = 1.5
+lastCycleTime = 0
+displayFirstSet = true
+
+function onTick()
+    -- clear tables every tick
+    wmsgs = {}
+    cmsgs = {}
+    omsgs = {}
+    imsgs = {}
+    
+    -- collect inputs, probably gonna remove "local" at some point, its redundant.
+    local e1n2 = input.getNumber(1)
+    local e1t = input.getNumber(2)
+    local e1n1 = input.getNumber(3)
+    local e2n2 = input.getNumber(4)
+    local e2t = input.getNumber(5)
+    local e2n1 = input.getNumber(6)
+    local fuell = input.getNumber(7)
+    local fuelr = input.getNumber(8)
+    local fuelc = input.getNumber(9)
+    local fire1 = input.getBool(1)
+    local fire2 = input.getBool(2)
+    local blink = input.getBool(3)
+    local afire = input.getBool(4)
+    local afault = input.getBool(5)
+    local arun = input.getBool(6)
+    local poff = input.getBool(7)
+    local sby = input.getBool(8)
+    local blink2 = input.getBool(9)
+    
+    -- faults collection
+    if fire1 then table.insert(wmsgs, "E1 FIRE") end
+    if fire2 then table.insert(wmsgs, "E2 FIRE") end
+    if e1n2 < 6 then table.insert(wmsgs, "E1 STALL") end
+    if e2n2 < 6 then table.insert(wmsgs, "E2 STALL") end
+    if afire then table.insert(wmsgs, "APU FIRE") end
+    if afault then table.insert(imsgs, "APU INOP") end
+    if math.abs(fuell - fuelr) > 500 then table.insert(cmsgs, "FUEL IMBAL") end
+    if fuell < 500 or fuelr < 500 or fuelc < 500 then table.insert(cmsgs, "FUEL LOW") end
+    if poff then table.insert(cmsgs, "PUMP OFF") end
+    if sby then table.insert(cmsgs, "STBY PWR") end
+    if arun then table.insert(imsgs, "APU RUN") end
+    
+    -- Toggle between sets based on blink2 input
+    if blink2 then
+        displayFirstSet = not displayFirstSet
+    end
+end
+
+function onDraw()
+    local lineYPositions = {36, 41, 46, 51, 56}
+    
+    -- put into faults table
+    local faults = {}
+    for _, fault in ipairs(wmsgs) do
+        faults[fault] = { text = fault, color = { 255, 0, 0 } }  -- Red for wmsgs
+    end
+    for _, fault in ipairs(cmsgs) do
+        faults[fault] = { text = fault, color = { 255, 93, 0 } }  -- Orange for cmsgs
+    end
+    for _, fault in ipairs(imsgs) do
+        faults[fault] = { text = fault, color = { 255, 0, 159 } }  -- Purple for imsgs
+    end
+    for _, fault in ipairs(omsgs) do
+        faults[fault] = { text = fault, color = { 0, 255, 0 } }  -- Green for omsgs
+    end
+    
+    -- check if faults table nil
+    if not faults then
+        return  -- exit early if faults table is nil
+    end
+    
+    -- display faults based on toggle flag
+    local i = 1
+    local displayedFaults = 0
+    for _, fault in pairs(faults) do
+        if displayedFaults >= 5 then
+            break  -- Limit to 5 faults
+        end
+        SC(fault.color[1], fault.color[2], fault.color[3])
+        txt(25, lineYPositions[i], fault.text)
+        i = i + 1
+        displayedFaults = displayedFaults + 1
+    end
+    
+    SC(255, 255, 255)
+end
+
+function txt(x, y, t)
+    t = tostring(t)
+    for i = 1, t:len() do
+        local c = t:sub(i, i):upper():byte() * 3 - 95
+        if c > 193 then
+            c = c - 78
+        end
+        c = "0x" .. string.sub("0000D0808F6F5FAB6D5B7080690096525272120222010168F9F5F1BBD9DBE2FDDBFBB8BCFBFEAF0A01A025055505289C69D7A7FB6699F96FB9FA869BF2F9F921EF69F11FCFF8F696FA4F9EFA55BB8F8F1FE1EF3FD2DC3CBFDF9086109F4841118406F90F09F6642", c, c + 2)
+        for j = 0, 11 do
+            if c & (1 << (11 - j)) > 0 then
+                local b = x + j // 4 + i * 4 - 4
+                DL(b, y + j % 4, b, y + j % 4 + 1)
+            end
+        end
+    end
+end
