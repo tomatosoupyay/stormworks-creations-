@@ -18,32 +18,35 @@ lastCycleTime = 0
 displayFirstSet = true
 
 function onTick()
-    -- clear tables every tick
+    -- clear tables every tick, inefficient on run time but hey it works..
     wmsgs = {}
     cmsgs = {}
     omsgs = {}
     imsgs = {}
     
     -- collect inputs, probably gonna remove "local" at some point, its redundant.
-    local e1n2 = input.getNumber(1)
-    local e1t = input.getNumber(2)
-    local e1n1 = input.getNumber(3)
-    local e2n2 = input.getNumber(4)
-    local e2t = input.getNumber(5)
-    local e2n1 = input.getNumber(6)
-    local fuell = input.getNumber(7)
-    local fuelr = input.getNumber(8)
-    local fuelc = input.getNumber(9)
-    local fire1 = input.getBool(1)
-    local fire2 = input.getBool(2)
-    local blink = input.getBool(3)
-    local afire = input.getBool(4)
-    local afault = input.getBool(5)
-    local arun = input.getBool(6)
-    local poff = input.getBool(7)
-    local sby = input.getBool(8)
-    local blink2 = input.getBool(9)
-    
+    e1n2 = input.getNumber(1)
+    e1t = input.getNumber(2)
+    e1n1 = input.getNumber(3)
+    e2n2 = input.getNumber(4)
+    e2t = input.getNumber(5)
+    e2n1 = input.getNumber(6)
+    fuell = input.getNumber(7)
+    fuelr = input.getNumber(8)
+    fuelc = input.getNumber(9)
+    fire1 = input.getBool(1)
+    fire2 = input.getBool(2)
+    blink = input.getBool(3)
+    afire = input.getBool(4)
+    afault = input.getBool(5)
+    arun = input.getBool(6)
+    poff = input.getBool(7)
+    sby = input.getBool(8)
+    blink2 = input.getBool(9)
+    mldl=input.getBool(10)
+    mrdl=input.getBool(11)
+    ngdl=input.getBool(12)
+    gf=input.getBool(13) --something you will never have
     -- faults collection
     if fire1 then table.insert(wmsgs, "E1 FIRE") end
     if fire2 then table.insert(wmsgs, "E2 FIRE") end
@@ -56,51 +59,67 @@ function onTick()
     if poff then table.insert(cmsgs, "PUMP OFF") end
     if sby then table.insert(cmsgs, "STBY PWR") end
     if arun then table.insert(imsgs, "APU RUN") end
+    if mldl and mrdl and ngdl then table.insert(imsgs,"GEAR DOWN") end
+    if gf then table.insert(wmsgs,"GEAR WARN") end
     
-    -- Toggle between sets based on blink2 input
+    -- toggle between sets based on blink2 input
     if blink2 then
         displayFirstSet = not displayFirstSet
     end
 end
 
 function onDraw()
-    local lineYPositions = {36, 41, 46, 51, 56}
+    lineYPositions = {36, 41, 46, 51, 56}
     
-    -- put into faults table
-    local faults = {}
+    -- put faults into a single table
+    allFaults = {}
     for _, fault in ipairs(wmsgs) do
-        faults[fault] = { text = fault, color = { 255, 0, 0 } }  -- Red for wmsgs
+        table.insert(allFaults, { text = fault, color = { 255, 0, 0 } })  -- Red for wmsgs
     end
     for _, fault in ipairs(cmsgs) do
-        faults[fault] = { text = fault, color = { 255, 93, 0 } }  -- Orange for cmsgs
+        table.insert(allFaults, { text = fault, color = { 255, 93, 0 } })  -- Orange for cmsgs
     end
     for _, fault in ipairs(imsgs) do
-        faults[fault] = { text = fault, color = { 255, 0, 159 } }  -- Purple for imsgs
+        table.insert(allFaults, { text = fault, color = { 255, 0, 159 } })  -- Purple for imsgs
     end
     for _, fault in ipairs(omsgs) do
-        faults[fault] = { text = fault, color = { 0, 255, 0 } }  -- Green for omsgs
+        table.insert(allFaults, { text = fault, color = { 0, 255, 0 } })  -- Green for omsgs
     end
     
-    -- check if faults table nil
-    if not faults then
-        return  -- exit early if faults table is nil
+    -- check if allFaults table is empty
+    if #allFaults == 0 then
+        return  -- exit early if no faults to display
     end
     
-    -- display faults based on toggle flag
-    local i = 1
-    local displayedFaults = 0
-    for _, fault in pairs(faults) do
-        if displayedFaults >= 5 then
+    -- determine which set of faults to display
+    displayedFaults = {}
+    startIdx = 1
+    
+    if #allFaults > 5 then
+        if blink2 then
+            startIdx = displayFirstSet and 1 or 6
+        end
+    end
+    
+    -- collect faults to display
+    for i = startIdx, #allFaults do
+        table.insert(displayedFaults, allFaults[i])
+        if #displayedFaults >= 5 then
             break  -- Limit to 5 faults
         end
+    end
+    
+    -- display faults
+    i = 1
+    for _, fault in ipairs(displayedFaults) do
         SC(fault.color[1], fault.color[2], fault.color[3])
         txt(25, lineYPositions[i], fault.text)
         i = i + 1
-        displayedFaults = displayedFaults + 1
     end
     
     SC(255, 255, 255)
 end
+
 
 function txt(x, y, t)
     t = tostring(t)
