@@ -11,20 +11,20 @@ cmsgs = {}
 omsgs = {}
 imsgs = {}
 
---cycles
-cycleTime = 3
-displayTime = 1.5
+--[[cycles
+cycleTime = 23
+displayTime = 21.5
 lastCycleTime = 0
 displayFirstSet = true
-
+--]]
 function onTick()
     -- clear tables every tick, inefficient on run time but hey it works..
     wmsgs = {}
     cmsgs = {}
     omsgs = {}
     imsgs = {}
-    
-    -- collect inputs, probably gonna remove "local" at some point, its redundant.
+
+    -- removed local, its redudant as far as i can tell (in context of sw scripting)
     e1n2 = input.getNumber(1)
     e1t = input.getNumber(2)
     e1n1 = input.getNumber(3)
@@ -47,6 +47,23 @@ function onTick()
     mrdl=input.getBool(11)
     ngdl=input.getBool(12)
     gf=input.getBool(13) --something you will never have
+    e1genoff=input.getBool(14)
+    e2genoff=input.getBool(15)
+    adiruoff=input.getBool(16)
+    stfualarm=input.getBool(17)
+    forcedirlaw=input.getBool(18)
+    fctllaw=input.getNumber(10)
+    AFLOOR=input.getBool(19)
+    temp=input.getNumber(11)
+    agenoff=input.getBool(20) --
+    flapdiff=input.getNumber(12)
+    flap=input.getNumber(13)
+    throt=input.getNumber(14)
+    gpsLissue=input.getBool(21)
+    gpsRissue=input.getBool(22)
+    ovspd=input.getBool(23)
+    flapnoexist=input.getBool(24)
+    RA=input.getNumber(15)
     -- faults collection
     if fire1 then table.insert(wmsgs, "E1 FIRE") end
     if fire2 then table.insert(wmsgs, "E2 FIRE") end
@@ -61,46 +78,62 @@ function onTick()
     if arun then table.insert(imsgs, "APU RUN") end
     if mldl and mrdl and ngdl then table.insert(imsgs,"GEAR DOWN") end
     if gf then table.insert(wmsgs,"GEAR WARN") end
-    
-    -- toggle between sets based on blink2 input
-    if blink2 then
+    if e1genoff then table.insert(cmsgs,"E1 GEN OFF") end
+    if e2genoff then table.insert(cmsgs,"E2 GEN OFF") end
+    if adiruoff then table.insert(cmsgs,"ADIRU OFF") end
+    if forcedirlaw or fctllaw == 2 then table.insert(wmsgs,"FCTL DIR L") end
+    if fctllaw == 1 then table.insert(cmsgs,"FCTL ALT L") end
+    if AFLOOR then table.insert(wmsgs,"A.FLOOR") end
+    if temp > 60 and temp < 90 then table.insert(cmsgs,"CAB TEMP") end
+    if temp > 90 then table.insert(wmsgs,"CAB FIRE") end
+    if agenoff and arun then table.insert(cmsgs,"APU GEN") end
+    if math.abs(flapdiff) > 0.03 then table.insert(wmsgs,"FLAP ASSY") end
+    if gpsLissue then table.insert(cmsgs,"GPS L") end
+    if gpsRissue then table.insert(cmsgs,"GPS R") end
+    if gpsLissue and gpsRissue then table.insert(wmsgs,"GPS FAIL") end
+    if ovspd then table.insert(cmsgs,"OVERSPEED") end
+    if flapnoexist then table.insert(wmsgs,"FLAP FAIL") end
+    if throt > 0.9 and RA < 2.5 then table.insert(wmsgs,"TOFF CONF") end
+
+
+    if blink2 then -- every 3 seconds cycles to second set. might add more sets soon or switch to a for-loop based system since thats way more efficient.
         displayFirstSet = not displayFirstSet
     end
 end
 
 function onDraw()
     lineYPositions = {36, 41, 46, 51, 56}
-    
+
     -- put faults into a single table
     allFaults = {}
     for _, fault in ipairs(wmsgs) do
-        table.insert(allFaults, { text = fault, color = { 255, 0, 0 } })  -- Red for wmsgs
+        table.insert(allFaults, { text = fault, color = { 255, 0, 0 } })  -- Red for wmsgs (warning)
     end
     for _, fault in ipairs(cmsgs) do
-        table.insert(allFaults, { text = fault, color = { 255, 93, 0 } })  -- Orange for cmsgs
+        table.insert(allFaults, { text = fault, color = { 255, 93, 0 } })  -- Orange for cmsgs (caution)
     end
     for _, fault in ipairs(imsgs) do
-        table.insert(allFaults, { text = fault, color = { 255, 0, 159 } })  -- Purple for imsgs
+        table.insert(allFaults, { text = fault, color = { 255, 0, 159 } })  -- Purple for imsgs (info)
     end
     for _, fault in ipairs(omsgs) do
-        table.insert(allFaults, { text = fault, color = { 0, 255, 0 } })  -- Green for omsgs
+        table.insert(allFaults, { text = fault, color = { 0, 255, 0 } })  -- Green for omsgs (other)
     end
-    
+
     -- check if allFaults table is empty
     if #allFaults == 0 then
         return  -- exit early if no faults to display
     end
-    
+
     -- determine which set of faults to display
     displayedFaults = {}
     startIdx = 1
-    
+
     if #allFaults > 5 then
         if blink2 then
             startIdx = displayFirstSet and 1 or 6
         end
     end
-    
+
     -- collect faults to display
     for i = startIdx, #allFaults do
         table.insert(displayedFaults, allFaults[i])
@@ -108,7 +141,7 @@ function onDraw()
             break  -- Limit to 5 faults
         end
     end
-    
+
     -- display faults
     i = 1
     for _, fault in ipairs(displayedFaults) do
@@ -116,7 +149,7 @@ function onDraw()
         txt(25, lineYPositions[i], fault.text)
         i = i + 1
     end
-    
+
     SC(255, 255, 255)
 end
 
