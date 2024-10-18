@@ -1,5 +1,5 @@
 --civic infotainment
-
+--kikuri needs her alcohol
 S=screen
 SC=S.setColor
 DL=S.drawLine
@@ -33,15 +33,24 @@ function onTick()
     gpsy=input.getNumber(22)
     if code ~= setcode then ticks=ticks+1 else ticks=0 end
     if ticks < 600 then
-        if ipir(inputX, inputY, 1,12,63,4) and press then
+        if ipir(inputX, inputY, 1,12,63,4) and press and car then
             setcode = code
         end
+    end
+    if ipir(inputX,inputY,1,7,34,4) then
+        if not alarmactpressed then
+            alarmact = not alarmact
+            alarmactpressed = true 
+        end
+    else
+        alarmactpressed = false
     end
 	output.setBool(30,radio)
 	output.setBool(31,cable)
     output.setNumber(1,radiofreq)
     output.setNumber(2,setcode) --valid code
     output.setBool(1,alarmact) --alarm is armed
+    
 end
 
 function onDraw()
@@ -169,14 +178,7 @@ end
 txt(1,27,"soup")
 txt(1,7,"ALARM:")
 txt(1,18,"VER: 2.2")
-if ipir(inputX,inputY,1,7,34,4) then
-    if not alarmactpressed then
-        alarmact = not alarmact
-        alarmactpressed = true 
-    end
-else
-    alarmactpressed = false
-end
+
 if alarmact then
 SC(0,255,0)
 txt(24,7,"yes") --or no!
