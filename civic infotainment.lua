@@ -1,5 +1,6 @@
 --civic infotainment
 --kikuri needs her alcohol
+--bocchi happy!
 S=screen
 SC=S.setColor
 DL=S.drawLine
@@ -19,8 +20,8 @@ digitCount = 0
 prevPress = false
 setcode=0
 alarmact=false
+alarmactconfirmed=false
 ticks=0
-alarmactpressed = false
 function onTick()
     
     cableavail=input.getBool(32)
@@ -37,20 +38,21 @@ function onTick()
             setcode = code
         end
     end
-    if ipir(inputX,inputY,1,7,34,4) then
-        if not alarmactpressed then
-            alarmact = not alarmact
-            alarmactpressed = true 
-        end
+    if ipir(inputX,inputY,1,7,34,4) and press and alarmactconfirmed == false then
+        output.setBool(1,true)
+        output.setBool(2,false)
+    elseif ipir(inputX,inputY,1,7,34,4) and press and alarmactconfirmed == true then
+        output.setBool(2,true)
+        output.setBool(1,false)
     else
-        alarmactpressed = false
+        output.setBool(1,false)
+        output.setBool(2,false)
     end
 	output.setBool(30,radio)
 	output.setBool(31,cable)
     output.setNumber(1,radiofreq)
     output.setNumber(2,setcode) --valid code
-    output.setBool(1,alarmact) --alarm is armed
-    
+    alarmactconfirmed=input.getBool(20)
 end
 
 function onDraw()
@@ -179,7 +181,7 @@ txt(1,27,"soup")
 txt(1,7,"ALARM:")
 txt(1,18,"VER: 2.2")
 
-if alarmact then
+if alarmactconfirmed then
 SC(0,255,0)
 txt(24,7,"yes") --or no!
 else
