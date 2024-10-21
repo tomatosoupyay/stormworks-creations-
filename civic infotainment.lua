@@ -1,6 +1,7 @@
 --civic infotainment
 --kikuri needs her alcohol
 --bocchi happy!
+--kikuri happy will only be a dream :(
 S=screen
 SC=S.setColor
 DL=S.drawLine
@@ -18,10 +19,11 @@ keyboard=false
 tempFreq = radiofreq
 digitCount = 0
 prevPress = false
-setcode=0
 alarmact=false
 alarmactconfirmed=false
 ticks=0
+validcode=0
+setcode=validcode
 function onTick()
     
     cableavail=input.getBool(32)
@@ -32,10 +34,14 @@ function onTick()
     code=input.getNumber(24)
     gpsx=input.getNumber(21)
     gpsy=input.getNumber(22)
-    if code ~= setcode then ticks=ticks+1 else ticks=0 end
+    validcode=input.getNumber(25)
+    if code ~= validcode then ticks=ticks+1 else ticks=0 end
     if ticks < 600 then
         if ipir(inputX, inputY, 1,12,63,4) and press and car then
             setcode = code
+            output.setBool(3,true)
+        else
+            output.setBool(3,false)
         end
     end
     if ipir(inputX,inputY,1,7,34,4) and press and alarmactconfirmed == false then
@@ -67,7 +73,7 @@ SC(185,185,185)
 txt(4,9,"audio")
 txt(4,18,"cable")
 txt(45,9,"MAP")
-txt(2,0,"BACK")
+txt(2,0,"HOME")
 txt(45,18,"CAR")
 if not cableavail then
 SC(255,0,0)
@@ -161,8 +167,6 @@ screen.setMapColorLand(115,155,115)
 screen.setMapColorGrass(255,255,255)
 screen.setMapColorSand(240,240,240)
 screen.setMapColorSnow(255,255,255)
-screen.setMapColorRock(84,84,84)
-screen.setMapColorGravel(115,115,115)
 screen.drawMap(gpsx,gpsy,2)
 end
 
@@ -179,7 +183,7 @@ txt(1,12,"chg code locked")
 end
 txt(1,27,"soup")
 txt(1,7,"ALARM:")
-txt(1,18,"VER: 2.2")
+txt(1,18,"VER: 2.3")
 
 if alarmactconfirmed then
 SC(0,255,0)
@@ -201,7 +205,7 @@ cable=false
 home=true
 end
 
-if ipir (inputX,inputY,0,0,19,5) and press then --back
+if ipir (inputX,inputY,0,0,19,5) and press then --home
 home=true
 radio=false
 car=false
@@ -217,7 +221,7 @@ txt(49,0,clk)
 SC(0,56,99)
 DL(0,5,63.25,5.25)
 SC(185,185,185)
-txt(2,0,"BACK")
+txt(2,0,"HOME")
 end
 if cable then
 SC(255,0,0)
