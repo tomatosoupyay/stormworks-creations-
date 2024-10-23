@@ -1,9 +1,11 @@
 --[[
-hi guys, this is just the TACS standard. Its designed to take the usefullness of the unippu and EHCS standards and combine them, for ease of use. enjoyyy. Not final
+hi guys, this is just the TACS standard. Its designed to take the usefullness of the unippu and EHCS standards and combine them, for ease of use. enjoyyy. Not final!
+
+
 CHANNELS FOR TACS (TOMATO ATTACHMENT and COMPATIBILITY STANDARD)
 
 ASCII is used for character transmission. see ASCII table: https://www.geeksforgeeks.org/ascii-table/
-You can use channels 6-12 for your own needs, however, try not do use these too much, itd be preffered if you can make a suggestion to add to the standard.
+You can use channels 6-12 for your own needs, however, try not to use these too much, it would be preffered if you can make a suggestion to add to the standard.
 NUMBER CHANNELS (from missile) 
  
 17 G LIMIT
