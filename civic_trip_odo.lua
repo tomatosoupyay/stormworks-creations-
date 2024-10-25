@@ -1,6 +1,8 @@
 --look at this redundant code!! woah!!
 --holt town
 --karakara is fire
+--bbbbbocchi
+-- <3
 S=screen
 SC=S.setColor
 DRF=S.drawRectF
