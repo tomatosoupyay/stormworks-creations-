@@ -1,4 +1,6 @@
 --look at this redundant code!! woah!!
+--holt town
+--karakara is fire
 S=screen
 SC=S.setColor
 DRF=S.drawRectF
@@ -21,24 +23,27 @@ temp=0 -- engine temp
 fuelused=0
 mpg=0
 speedms=0 --speed in m/s
+epulse=false
 function onTick()
 	ticks=ticks+1
     fuelnow=input.getNumber(8)
-    fuelstart=input.getNumber(11) -- start of trip fuel idk
+    fuelstart=input.getNumber(11) -- start of trip fuel idk (pretty sure this already pulses reset on start idk)
+    -- a reminder that fuelstart is taken from a memory register outside the script
     estart=input.getBool(15) -- engine start bool thing
     units=input.getBool(10)
     capacitor=input.getBool(16)
+    epulse=input.getBool(17) -- i decided to use a pulse outside the script since i forgot how to make one in lua and i cant use my phone right now
     speed=input.getNumber(1)
     temp=input.getNumber(7)
     park=input.getBool(1)
     speedms=input.getNumber(13)
-    if estart then elapsed = elapsed+1 elseif not capacitor and not estart then elapsed=0 end
+    if estart then elapsed = elapsed+1 elseif not capacitor or epulse then elapsed=0 end --one liner is crazy
 	if ticks <= 61 then ticks=0 end
     if speedms > 0.5 and estart == true then
         odo = odo + ((speedms)/60)
         finalodo=odo/1000 --km
     end
-    if capacitor==false then odo=0 finalodo=0 end
+    if capacitor==false or epulse then odo=0 finalodo=0 end
     fuelused=fuelstart-fuelnow
     mpg=((finalodo/1.609344) / ((fuelstart - fuelnow)/3.785))
     
