@@ -21,6 +21,7 @@ capacitor=false --screen on capacitor (stays on for 10 seconds after keyoff)
 odo=0 --odometer
 finalodo=0 --odometer reading thats final idk
 speed=0 --speed now
+hl=0
 temp=0 -- engine temp
 fuelused=0
 mpg=0
@@ -39,6 +40,7 @@ function onTick()
     temp=input.getNumber(7)
     park=input.getBool(1)
     speedms=input.getNumber(13)
+    hl=input.getNumber(10)
     if estart then elapsed = elapsed+1 elseif not capacitor or epulse then elapsed=0 end --one liner is crazy
 	if ticks <= 61 then ticks=0 end
     if speedms > 0.5 and estart == true then
@@ -128,11 +130,17 @@ function onDraw()
     SC(7,7,7)
     DL(19,3,11.25,4.25)
     DL(76,3,84.25,4.25)
+    if hl == 1 then
     SC(16,255,0)
+    elseif hl == 2 then
+    SC(0,0,255)
+    end
+    if hl >= 1 then
     DC(89,10,2)
     DL(93,8,95.25,8.25)
     DL(93,10,95.25,10.25)
     DL(93,12,95.25,12.25)
+    end
     if park then
     SC(255,0,0)
     DTX(24,10,"p")
