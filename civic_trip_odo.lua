@@ -20,6 +20,7 @@ speed=0 --speed now
 temp=0 -- engine temp
 fuelused=0
 mpg=0
+speedms=0 --speed in m/s
 function onTick()
 	ticks=ticks+1
     fuelnow=input.getNumber(8)
@@ -30,10 +31,11 @@ function onTick()
     speed=input.getNumber(1)
     temp=input.getNumber(7)
     park=input.getBool(1)
+    speedms=input.getNumber(13)
     if estart then elapsed = elapsed+1 elseif not capacitor and not estart then elapsed=0 end
 	if ticks <= 61 then ticks=0 end
-    if speed > 0.5 and estart == true then
-        odo = odo + ((speed/2.296936)/60)
+    if speedms > 0.5 and estart == true then
+        odo = odo + ((speedms)/60)
         finalodo=odo/1000 --km
     end
     if capacitor==false then odo=0 finalodo=0 end
@@ -41,8 +43,8 @@ function onTick()
     mpg=((finalodo/1.609344) / ((fuelstart - fuelnow)/3.785))
     
     aspeed=(finalodo * 0.621371) / (elapsed / 216000)
-    output.setNumber(1,aspeed)
-    output.setNumber(2,elapsed)
+    --output.setNumber(1,aspeed)
+    --output.setNumber(2,elapsed)
 end
 
 function onDraw()
