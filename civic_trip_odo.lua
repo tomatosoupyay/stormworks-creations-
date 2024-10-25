@@ -1,4 +1,8 @@
 --look at this redundant code!! woah!!
+--holt town
+--karakara is fire
+--bbbbbocchi
+-- <3
 S=screen
 SC=S.setColor
 DRF=S.drawRectF
@@ -17,32 +21,39 @@ capacitor=false --screen on capacitor (stays on for 10 seconds after keyoff)
 odo=0 --odometer
 finalodo=0 --odometer reading thats final idk
 speed=0 --speed now
+hl=0
 temp=0 -- engine temp
 fuelused=0
 mpg=0
+speedms=0 --speed in m/s
+epulse=false
 function onTick()
 	ticks=ticks+1
     fuelnow=input.getNumber(8)
-    fuelstart=input.getNumber(11) -- start of trip fuel idk
+    fuelstart=input.getNumber(11) -- start of trip fuel idk (pretty sure this already pulses reset on start idk)
+    -- a reminder that fuelstart is taken from a memory register outside the script
     estart=input.getBool(15) -- engine start bool thing
     units=input.getBool(10)
     capacitor=input.getBool(16)
+    epulse=input.getBool(17) -- i decided to use a pulse outside the script since i forgot how to make one in lua and i cant use my phone right now
     speed=input.getNumber(1)
     temp=input.getNumber(7)
     park=input.getBool(1)
-    if estart then elapsed = elapsed+1 elseif not capacitor and not estart then elapsed=0 end
+    speedms=input.getNumber(13)
+    hl=input.getNumber(10)
+    if estart then elapsed = elapsed+1 elseif not capacitor or epulse then elapsed=0 end --one liner is crazy
 	if ticks <= 61 then ticks=0 end
-    if speed > 0.5 and estart == true then
-        odo = odo + ((speed/2.296936)/60)
+    if speedms > 0.5 and estart == true then
+        odo = odo + ((speedms)/60)
         finalodo=odo/1000 --km
     end
-    if capacitor==false then odo=0 finalodo=0 end
+    if capacitor==false or epulse then odo=0 finalodo=0 end
     fuelused=fuelstart-fuelnow
     mpg=((finalodo/1.609344) / ((fuelstart - fuelnow)/3.785))
     
     aspeed=(finalodo * 0.621371) / (elapsed / 216000)
-    output.setNumber(1,aspeed)
-    output.setNumber(2,elapsed)
+    --output.setNumber(1,aspeed)
+    --output.setNumber(2,elapsed)
 end
 
 function onDraw()
@@ -119,11 +130,17 @@ function onDraw()
     SC(7,7,7)
     DL(19,3,11.25,4.25)
     DL(76,3,84.25,4.25)
+    if hl == 1 then
     SC(16,255,0)
+    elseif hl == 2 then
+    SC(0,0,255)
+    end
+    if hl >= 1 then
     DC(89,10,2)
     DL(93,8,95.25,8.25)
     DL(93,10,95.25,10.25)
     DL(93,12,95.25,12.25)
+    end
     if park then
     SC(255,0,0)
     DTX(24,10,"p")
