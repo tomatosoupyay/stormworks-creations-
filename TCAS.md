@@ -16,8 +16,8 @@ I decided to create a new TCAS standard. The script is still work in progress, b
 10. Own Altitude (From your altimeter)
 11. Own Squawk Code
 # Output Channels (Radio transmission and external system outputs)
-#### Radio Output Channels (Your aircraft data, transmitted to other aircraft)
-1. (bool) Transmit flag
+#### Radio Output Channels (Your aircraft data, transmitted to other aircraft
+CH1 (bool) Transmit flag
 1. X-coordinate (Own position)
 2. Y-coordinate (Own position)
 3. Altitude (Own position)
