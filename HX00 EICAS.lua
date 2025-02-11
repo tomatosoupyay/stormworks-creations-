@@ -81,13 +81,16 @@ function onTick()
     fmcexist = input.getNumber(20)
     tcasstatus = input.getNumber(21)
     spoilerfault = input.getNumber(22)
+    cargofire=input.getNumber(30)
 
     -- faults collection
     if fire1 then table.insert(wmsgs, "E1 FIRE") end
     if fire2 then table.insert(wmsgs, "E2 FIRE") end
+    if afire then table.insert(wmsgs, "APU FIRE") end
+    if cargofire == 1 then table.insert(wmsgs, "CRGO FIRE") end
+    if temp > 70 then table.insert(wmsgs, "CAB FIRE") end
     if e1n2 < 6 then table.insert(wmsgs, "E1 STALL") end
     if e2n2 < 6 then table.insert(wmsgs, "E2 STALL") end
-    if afire then table.insert(wmsgs, "APU FIRE") end
     if math.abs(fuell - fuelr) > 500 then table.insert(cmsgs, "FUEL IMBAL") end
     if fuell < 500 or fuelr < 500 then table.insert(cmsgs, "FUEL LOW") end
     if poff then table.insert(cmsgs, "PUMP OFF") end
@@ -103,7 +106,6 @@ function onTick()
     if fctllaw == 1 then table.insert(cmsgs, "FCTL ALT L") end
     if AFLOOR then table.insert(wmsgs, "A.FLOOR") end
     if temp > 60 and temp < 70 then table.insert(cmsgs, "CAB TEMP") end
-    if temp > 70 then table.insert(wmsgs, "CAB FIRE") end
     if agenoff and arun then table.insert(cmsgs, "APU GEN") end
     if math.abs(flapdiff) > 0.03 then table.insert(wmsgs, "FLAP ASSY") end
     if gpsLissue then table.insert(cmsgs, "GPS L") end
