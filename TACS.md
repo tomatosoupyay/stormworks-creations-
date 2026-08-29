@@ -4,7 +4,8 @@ hi guys, this is just the TACS standard. Its designed to take the usefullness of
 
 CHANNELS FOR TACS (TOMATO ATTACHMENT and COMPATIBILITY STANDARD)
 
-ASCII is used for character transmission. see ASCII table: https://www.geeksforgeeks.org/ascii-table/
+ASCII is used for character transmission/all letter channels. see ASCII table: https://www.geeksforgeeks.org/ascii-table/
+
 You can use channels 6-12 for your own needs, however, try not to use these too much, it would be preffered if you can make a suggestion to add to the standard.
 NUMBER CHANNELS (from missile) 
  
@@ -12,8 +13,8 @@ NUMBER CHANNELS (from missile)
 18 G LIMIT WITH MASTER ARM
 19 RADIO FROM MISSILE (0 is N/A)
 20 COUNT OR FUEL LEVEL (FOR RACKS AND EXT FUEL)
-21 TYPE
-23 LETTER 1
+21 TYPE (see type codes)
+23 LETTER 1 (ascii)
 24 LETTER 2
 25 LETTER 3
 26 LETTER 4
@@ -25,7 +26,7 @@ NUMBER CHANNELS (from missile)
 32 LETTER 10
 
 BOOLS (to plane)
-18 LOCKED
+18 LOCKED/READY-TO-SHOOT
 
 NUMBER CHANNELS (from plane)
 18 RADIO FREQ TO MISSILE (SARH OR LASER)
@@ -34,7 +35,7 @@ NUMBER CHANNELS (from plane)
 21 Z (Altitude)
 
 BOOL CHANNELS (from plane)
-18 FIRE (for multi ejector racks)
+18 FIRE (for multi racks)
 19 ARMED
 20 SAVE COORDS OR LAZE CODE (for gps or laser guided stuff)
 
